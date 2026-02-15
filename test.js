@@ -1,7 +1,7 @@
 import { chromium } from 'playwright';
 
 const TARGET_URL = 'https://adnade.net/ptp/?user=zedred&subid=';
-const TOTAL_TABS = 100;
+const TOTAL_TABS = 25;
 
 const PROXY_SERVER = 'http://gateway.aluvia.io:8080';
 const BASE_USERNAME = 'FdUKVaVd';
