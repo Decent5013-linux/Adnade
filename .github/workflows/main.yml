@@ -23,5 +23,5 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y xvfb
 
       - name: Run Script in Virtual Display
-        run: xvfb-run --auto-servernum node test.js
+        run: xvfb-run node test.js
         
