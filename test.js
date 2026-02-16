@@ -4,8 +4,8 @@ const TARGET_URL = 'https://adnade.net/ptp/?user=zedred&subid=';
 const TOTAL_TABS = 30;
 
 const PROXY_SERVER = 'http://gateway.aluvia.io:8080';
-const BASE_USERNAME = 'YsGtPsfN';
-const PROXY_PASSWORD = 'd3Hm9zXg';
+const BASE_USERNAME = 'r9HdVENx';
+const PROXY_PASSWORD = 'FxNMYthd';
 
 const IP_CHECK_URL = 'https://api.ipify.org?format=json';
 
