@@ -23,7 +23,7 @@ async function createWorker(tabIndex) {
 
   async function launch() {
     try {
-      browser = await chromium.launch
+      browser = await chromium.launch({
         headless: false,
         proxy: {
           server: PROXY_SERVER,
