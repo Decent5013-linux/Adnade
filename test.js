@@ -5,8 +5,8 @@ const TOTAL_TABS = 100;
 const BATCH_SIZE = 10;
 
 const PROXY_SERVER = 'http://gateway.aluvia.io:8080';
-const BASE_USERNAME = 'W2VnwvuJ';
-const PROXY_PASSWORD = 'TfWwyEJH';
+const BASE_USERNAME = 'VxXvkWqA';
+const PROXY_PASSWORD = 'sTdANqvb';
 
 const IP_CHECK_URL = 'https://api.ipify.org?format=json';
 
@@ -23,7 +23,7 @@ async function createWorker(tabIndex) {
 
   async function launch() {
     try {
-      browser = await chromium.launch({
+      browser = await chromium.launch
         headless: false,
         proxy: {
           server: PROXY_SERVER,
