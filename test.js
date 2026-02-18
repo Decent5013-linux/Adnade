@@ -1,227 +1,184 @@
 import { chromium } from 'playwright';
-import https from 'https';
 
 const TARGET_URL = 'https://adnade.net/ptp/?user=zedred&subid=';
 const TOTAL_TABS = 30;
 
 const PROXY_SERVER = 'http://gateway.aluvia.io:8080';
-let BASE_USERNAME = 'W2VnwvuJ';
-let PROXY_PASSWORD = 'TfWwyEJH';
-
-const IP_CHECK_URL = 'https://api.ipify.org?format=json';
 const SECRET_URL = 'https://bot.vpsmail.name.ng/secret.txt';
 
-const pages = [];
-const workers = [];
+const IP_CHECK_URL = 'https://api.ipify.org?format=json';
 
 function randomSession() {
   return Math.random().toString(36).substring(2, 10);
 }
 
-/* ---------- FETCH SECRET CREDS SAFE ---------- */
-
-function fetchSecret(){
-  return new Promise(resolve=>{
-    const req = https.get(SECRET_URL,res=>{
-      let raw="";
-      res.on("data",d=>raw+=d);
-      res.on("end",()=>{
-        const lines = raw.trim().split(/\r?\n/).filter(Boolean);
-        if(lines.length>=2)
-          resolve({user:lines[0],pass:lines[1]});
-        else resolve(null);
-      });
-    });
-
-    req.on("error",()=>resolve(null));
-    req.setTimeout(10000,()=>{
-      req.destroy();
-      resolve(null);
-    });
-  });
-}
-
-/* ---------- SECRET WATCHER ---------- */
-
-function startSecretWatcher(){
-  setInterval(async()=>{
-    const s = await fetchSecret();
-    if(!s) return;
-
-    if(s.user!==BASE_USERNAME || s.pass!==PROXY_PASSWORD){
-      console.log("New proxy creds detected → restarting workers");
-
-      BASE_USERNAME = s.user;
-      PROXY_PASSWORD = s.pass;
-
-      await Promise.allSettled(workers.map(w=>w()));
-      console.log("All workers restarted with new creds.");
+// 🔥 Fetch proxy credentials from remote file
+async function fetchProxyCreds() {
+  try {
+    const res = await fetch(SECRET_URL);
+    const text = await res.text();
+    const [username, password] = text.trim().split('\n');
+    if (username && password) {
+      return {
+        username: username.trim(),
+        password: password.trim()
+      };
     }
-
-  },300000);
+  } catch (err) {
+    console.log('Failed to fetch proxy creds.');
+  }
+  return null;
 }
 
-/* ---------- WORKER ---------- */
-
-async function createWorker(tabIndex){
+async function createWorker(tabIndex, getCreds) {
 
   let browser, context, page;
-  let lastIP=null;
-  let sessionId=randomSession();
-  let sessionUsername=`${BASE_USERNAME}-session-${sessionId}`;
-  let monitorTimer;
-  let retryDelay=1000;
+  let lastIP = null;
+  let sessionId = randomSession();
 
-  async function safeClose(){
-    try{
-      await Promise.race([
-        browser?.close(),
-        new Promise(r=>setTimeout(r,5000))
-      ]);
-    }catch{}
-  }
+  async function launch() {
+    const proxyCreds = await getCreds();
+    const sessionUsername = `${proxyCreds.username}-session-${sessionId}`;
+    const sessionPassword = proxyCreds.password;
 
-  async function launch(){
-    try{
-
+    try {
       browser = await chromium.launch({
-        headless:false,
-        proxy:{
-          server:PROXY_SERVER,
-          username:sessionUsername,
-          password:PROXY_PASSWORD
+        headless: false,
+        proxy: {
+          server: PROXY_SERVER,
+          username: sessionUsername,
+          password: sessionPassword
         },
-        args:[
-          '--no-sandbox',
-          '--ignore-certificate-errors',
-          '--disable-gpu',
-          '--disable-software-rasterizer'
-        ]
+        args: ['--no-sandbox', '--ignore-certificate-errors']
       });
 
       context = await browser.newContext({
-        ignoreHTTPSErrors:true
+        ignoreHTTPSErrors: true
       });
 
-      context.setDefaultTimeout(60000);
-      context.setDefaultNavigationTimeout(60000);
+      context.setDefaultTimeout(0);
+      context.setDefaultNavigationTimeout(0);
 
       page = await context.newPage();
-      pages.push(page);
 
-      page.on("close",()=>{
-        const i=pages.indexOf(page);
-        if(i!==-1) pages.splice(i,1);
-      });
+      page.setDefaultTimeout(0);
+      page.setDefaultNavigationTimeout(0);
 
-      page.setDefaultTimeout(60000);
-      page.setDefaultNavigationTimeout(60000);
+      await page.goto(TARGET_URL, {
+        waitUntil: 'domcontentloaded',
+        timeout: 0
+      }).catch(() => {});
 
-      await page.goto(TARGET_URL,{
-        waitUntil:'domcontentloaded',
-        timeout:60000
-      }).catch(()=>{});
-
-      const res = await page.request.get(IP_CHECK_URL).catch(()=>null);
-      if(res){
-        const data = await res.json().catch(()=>null);
-        if(data) lastIP=data.ip;
+      const res = await page.request.get(IP_CHECK_URL).catch(() => null);
+      if (res) {
+        const data = await res.json().catch(() => null);
+        if (data) lastIP = data.ip;
       }
-
-      retryDelay=1000;
 
       console.log(`Tab ${tabIndex} started | Session ${sessionId} | IP: ${lastIP}`);
 
-    }catch{
+    } catch (err) {
       console.log(`Tab ${tabIndex} launch failed. Retrying...`);
       await restart();
     }
   }
 
-  async function restart(){
+  async function restart() {
+    try {
+      if (browser) await browser.close().catch(() => {});
+    } catch {}
 
-    clearInterval(monitorTimer);
-    await safeClose();
-
-    await new Promise(r=>setTimeout(r,retryDelay));
-    retryDelay=Math.min(retryDelay*2,30000);
-
-    sessionId=randomSession();
-    sessionUsername=`${BASE_USERNAME}-session-${sessionId}`;
-    lastIP=null;
+    sessionId = randomSession();
+    lastIP = null;
 
     await launch();
-    monitor();
   }
 
-  async function monitor(){
-
-    monitorTimer=setInterval(async()=>{
-      try{
-
-        if(!page || page.isClosed()){
-          console.log(`Tab ${tabIndex} closed. Restarting`);
+  async function monitor() {
+    setInterval(async () => {
+      try {
+        if (!page || page.isClosed()) {
+          console.log(`Tab ${tabIndex} page closed. Restarting...`);
           return restart();
         }
 
-        await page.evaluate(()=>1);
+        const res = await page.request.get(IP_CHECK_URL).catch(() => null);
+        if (!res) return;
 
-        const res = await page.request.get(IP_CHECK_URL).catch(()=>null);
-        if(!res) return;
+        const data = await res.json().catch(() => null);
+        if (!data) return;
 
-        const data = await res.json().catch(()=>null);
-        if(!data) return;
+        const currentIP = data.ip;
 
-        const currentIP=data.ip;
+        if (lastIP && currentIP !== lastIP) {
+          console.log(
+            `Tab ${tabIndex} IP changed: ${lastIP} → ${currentIP}`
+          );
 
-        if(lastIP && currentIP!==lastIP){
-          console.log(`Tab ${tabIndex} IP changed ${lastIP} → ${currentIP}`);
-          lastIP=currentIP;
+          lastIP = currentIP;
 
-          await page.goto(TARGET_URL,{
-            waitUntil:'domcontentloaded',
-            timeout:60000
-          }).catch(()=>{});
+          await page.goto(TARGET_URL, {
+            waitUntil: 'domcontentloaded',
+            timeout: 0
+          }).catch(() => {});
         }
 
-      }catch{
-        console.log(`Tab ${tabIndex} crashed. Restarting`);
+      } catch (err) {
+        console.log(`Tab ${tabIndex} crashed. Restarting...`);
         await restart();
       }
-
-    },2000);
+    }, 2000);
   }
-
-  workers.push(restart);
 
   await launch();
   monitor();
+
+  return {
+    restart
+  };
 }
 
-/* ---------- START ---------- */
-
-(async()=>{
-
-  console.log("Checking secret.txt for initial creds...");
-  const init = await fetchSecret();
-  if(init){
-    BASE_USERNAME=init.user;
-    PROXY_PASSWORD=init.pass;
-    console.log("Using creds from secret.txt");
-  }
-
+// ---- START ALL SIMULTANEOUSLY ----
+(async () => {
   console.log(`Launching ${TOTAL_TABS} workers...`);
 
-  await Promise.all(
-    Array.from({length:TOTAL_TABS},(_,i)=>createWorker(i))
+  let currentCreds = await fetchProxyCreds();
+  if (!currentCreds) {
+    console.log('Could not retrieve initial proxy credentials.');
+    process.exit(1);
+  }
+
+  const workers = await Promise.all(
+    Array.from({ length: TOTAL_TABS }, (_, i) =>
+      createWorker(i, fetchProxyCreds)
+    )
   );
 
-  console.log("All workers active.");
+  console.log('All workers active.');
 
-  startSecretWatcher();
+  // 🔁 GLOBAL credential watcher (every 5 minutes)
+  setInterval(async () => {
+    try {
+      const latest = await fetchProxyCreds();
+      if (!latest) return;
 
-  process.on("SIGINT",async()=>{
-    console.log("\nShutting down...");
+      if (
+        latest.username !== currentCreds.username ||
+        latest.password !== currentCreds.password
+      ) {
+        console.log('Global credential update detected. Restarting all workers...');
+
+        currentCreds = latest;
+
+        for (const worker of workers) {
+          await worker.restart();
+        }
+      }
+    } catch {}
+  }, 5 * 60 * 1000);
+
+  process.on('SIGINT', async () => {
+    console.log('\nShutting down...');
     process.exit(0);
   });
 
