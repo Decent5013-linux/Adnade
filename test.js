@@ -24,7 +24,7 @@ function getCreds() {
   const { user, pass } = await getCreds();
 
   const browser = await chromium.launch({
-    headless: true,
+    headless: false,
     proxy: {
       server: PROXY_SERVER,
       username: user,
