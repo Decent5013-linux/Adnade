@@ -1,0 +1,46 @@
+name: Playwright python
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-playwright:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        instance: [1,2,3,4,5,6,7,8,9,10]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install Python dependencies
+        run: |
+          pip install playwright
+          pip install pynput
+
+      - name: Install Playwright Browsers
+        run: |
+          playwright install
+          playwright install-deps
+
+      - name: Install Xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      - name: Download User Agent Files
+        run: |
+          wget "https://www.dropbox.com/scl/fi/73l2vinlzrs3lewyy5clr/desktop_user_agents_500k_with_viewport.txt.gz?rlkey=yp2i5bukhpk94uo10uwqup4xe&st=v6iin0dk&dl=1" -O desktop_user_agents_500k_with_viewport.txt.gz
+          wget "https://www.dropbox.com/scl/fi/h4f8rb1pcvjrt0t77wh52/mobile_user_agents_500k_with_viewport.txt.gz?rlkey=9i7oj247fo0pby9f0m9w7w5u0&st=xu6yetk3&dl=1" -O mobile_user_agents_500k_with_viewport.txt.gz
+
+      - name: Run Script in Virtual Display
+        run: xvfb-run python test.py
