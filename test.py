@@ -41,7 +41,7 @@ async def get_proxy_credentials():
     use_existing = False
     if existing_session:
         # 67-82% chance to generate new, 18-33% chance to use existing
-        if random.random() < 0.75:  # 75% generate new, 25% use existing (within the 67-82% range)
+        if random.random() < 0.85:  # 75% generate new, 25% use existing (within the 67-82% range)
             use_existing = False
         else:
             use_existing = True
@@ -73,9 +73,9 @@ async def get_proxy_credentials():
 
 # ================= REFERRER CONFIG =================
 REFERRERS = {
-    "ff.vpsmail.name.ng": 0.35,      # frequent
-    "zerads.com": 0.30,               # frequent but not like vpsmail
-    "miningblocks.club": 0.20,         # less frequent
+    "ff.vpsmail.name.ng": 0.5,      # frequent
+    "zerads.com": 0.2,               # frequent but not like vpsmail
+    "miningblocks.club": 0.15,         # less frequent
     "easyhits4u.com": 0.10,            # not too frequent
     "m.facebook.com": 0.05             # rare
 }
