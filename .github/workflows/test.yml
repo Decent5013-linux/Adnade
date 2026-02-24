@@ -28,6 +28,7 @@ jobs:
         run: |
           pip install playwright
           pip install pynput
+          pip install aiohttp
 
       - name: Install Playwright Browsers
         run: |
