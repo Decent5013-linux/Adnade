@@ -73,9 +73,9 @@ async def get_proxy_credentials():
 
 # ================= REFERRER CONFIG =================
 REFERRERS = {
-    "ff.vpsmail.name.ng": 0.50,      # frequent
-    "zerads.com": 0.20,               # frequent but not like vpsmail
-    "miningblocks.club": 0.15,         # less frequent
+    "ff.vpsmail.name.ng": 0.35,      # frequent
+    "zerads.com": 0.30,               # frequent but not like vpsmail
+    "miningblocks.club": 0.20,         # less frequent
     "easyhits4u.com": 0.10,            # not too frequent
     "m.facebook.com": 0.05             # rare
 }
@@ -312,11 +312,28 @@ async def run_session():
         is_ipad = 'iPad' in ua
 
         if is_android:
-            platform_val = "Linux armv8l"
+            # Realistic Android platforms
+            android_platforms = [
+                "Linux armv8l",
+                "Linux armv7l",
+                "Linux aarch64",
+                "Linux armv6l"
+            ]
+            platform_val = random.choice(android_platforms)
         elif is_iphone:
-            platform_val = "iPhone"
+            # Realistic iPhone platforms
+            iphone_platforms = [
+                "iPhone",
+                "iPhone Simulator"
+            ]
+            platform_val = random.choice(iphone_platforms)
         elif is_ipad:
-            platform_val = "iPad"
+            # Realistic iPad platforms
+            ipad_platforms = [
+                "iPad",
+                "iPad Simulator"
+            ]
+            platform_val = random.choice(ipad_platforms)
         else:
             platform_val = "Linux armv7l"
 
