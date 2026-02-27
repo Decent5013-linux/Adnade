@@ -2,7 +2,7 @@ import { chromium } from "playwright";
 import https from "https";
 
 const TARGET_URL = "https://bot.vpsmail.name.ng/ad.html";
-const TABS = 30;
+const TABS = 10;
 const PROXY_SERVER = "http://gateway.aluvia.io:8080";
 const CREDS_URL = "https://bot.vpsmail.name.ng/secret.txt";
 const CHECK_INTERVAL = 5 * 60 * 1000; // 5 min
