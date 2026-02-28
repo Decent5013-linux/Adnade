@@ -73,11 +73,13 @@ async def get_proxy_credentials():
 
 # ================= REFERRER CONFIG =================
 REFERRERS = {
-    "ff.vpsmail.name.ng": 0.5,      # frequent
-    "zerads.com": 0.2,               # frequent but not like vpsmail
+    "ff.vpsmail.name.ng": 0.4,      # frequent
+    "zerads.com": 0.1, 
+    "hit4hit.org": 0.1,
+    "probux.net": 0.1, # frequent but not like vpsmail
     "miningblocks.club": 0.15,         # less frequent
     "easyhits4u.com": 0.10,            # not too frequent
-    "m.facebook.com": 0.05             # rare
+    "m.facebook.com": 0.05            # rare
 }
 
 def get_random_referrer():
