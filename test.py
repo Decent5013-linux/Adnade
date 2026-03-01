@@ -41,7 +41,7 @@ async def get_proxy_credentials():
     use_existing = False
     if existing_session:
         # 67-82% chance to generate new, 18-33% chance to use existing
-        if random.random() < 0.85:  # 75% generate new, 25% use existing (within the 67-82% range)
+        if random.random() < 1:  # 75% generate new, 25% use existing (within the 67-82% range)
             use_existing = False
         else:
             use_existing = True
@@ -73,13 +73,13 @@ async def get_proxy_credentials():
 
 # ================= REFERRER CONFIG =================
 REFERRERS = {
-    "ff.vpsmail.name.ng": 0.4,      # frequent
-    "zerads.com": 0.1, 
-    "hit4hit.org": 0.1,
-    "probux.net": 0.1, # frequent but not like vpsmail
-    "miningblocks.club": 0.15,         # less frequent
-    "easyhits4u.com": 0.10,            # not too frequent
-    "m.facebook.com": 0.05            # rare
+    "ff.vpsmail.name.ng": 0.5,      # frequent
+    "zerads.com": 0.5, 
+    #"hit4hit.org": 0.1,
+    #"probux.net": 0.1, # frequent but not like vpsmail
+    #"miningblocks.club": 0.15,         # less frequent
+    #"easyhits4u.com": 0.10,            # not too frequent
+    #"m.facebook.com": 0.05            # rare
 }
 
 def get_random_referrer():
@@ -463,7 +463,7 @@ async def run_session():
         # Determine session duration before closing
         duration_roll = random.random()
         if duration_roll < 0.8:  # 40-95% range (using 80% as middle ground)
-            session_duration = random.randint(3, 9)
+            session_duration = random.randint(10, 15)
             print(f"Session duration: {session_duration} seconds (short/frequent)")
         else:  # 5-20% range (using 20% as remaining)
             session_duration = random.randint(10, 14)
