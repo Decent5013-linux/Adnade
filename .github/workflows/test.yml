@@ -27,6 +27,8 @@ jobs:
       - name: Install Python dependencies
         run: |
           pip install playwright
+          pip install requests
+          pip install pyautogui
           pip install pynput
           pip install aiohttp
 
