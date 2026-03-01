@@ -438,7 +438,7 @@ async def run_session():
         """)
 
         # Navigate without waiting for page load
-        await page.goto('https://www.rotate4all.com/ptp/promote-299306', referer=referrer, wait_until="commit")
+        await page.goto('https://lltrco.com/?r=zedred', referer=referrer, wait_until="commit")
 
         print(f"Mode: {'Mobile' if is_mobile else 'Desktop'}")
         print(f"Platform: {platform_val}")
