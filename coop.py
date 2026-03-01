@@ -54,13 +54,8 @@ async def get_proxy_credentials():
 
 # ================= REFERRER CONFIG =================
 REFERRERS = {
-    "ff.vpsmail.name.ng": 0.4,      # frequent
-    "zerads.com": 0.1, 
-    "hit4hit.org": 0.1,
-    "probux.net": 0.1, # frequent but not like vpsmail
-    "miningblocks.club": 0.15,         # less frequent
-    "easyhits4u.com": 0.10,            # not too frequent
-    "m.facebook.com": 0.05            # rare
+    "ff.vpsmail.name.ng": 0.5,      # frequent
+    "zerads.com": 0.5            # rare
 }
 
 def get_random_referrer():
@@ -438,7 +433,7 @@ async def run_session():
             print("[Iframe] No iframe detected - skipping interactions")
 
         # Session duration between 7-15 seconds (as requested)
-        session_duration = random.randint(7, 15)
+        session_duration = random.randint(15, 20)
         print(f"Session duration: {session_duration} seconds")
         
         await asyncio.sleep(session_duration)
