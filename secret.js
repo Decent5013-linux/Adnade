@@ -16,14 +16,19 @@ async function runTask() {
     const emailSelector = 'input[placeholder="Enter your email"]';
     await page.waitForSelector(emailSelector);
 
-    // create webhook uuid
-    const uuid = execSync(
-      `curl -s -X POST https://webhook.site/token | grep -o '"uuid":"[^"]*"' | cut -d'"' -f4`
-    )
-      .toString()
-      .trim();
+    // generate 12 random characters
+    function randomString(length = 12) {
+      const chars =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
 
-    const email = `${uuid}@emailhook.site`;
+    const randomPart = randomString(12);
+    const email = `decencyawowo2021+${randomPart}@gmail.com`;
     console.log("Email:", email);
 
     await page.fill(emailSelector, email);
@@ -39,17 +44,16 @@ async function runTask() {
 
     let code = null;
 
-    // poll webhook until OTP arrives
+    // keep running gmail.js until OTP is found
     while (!code) {
       try {
-        const result = execSync(
-          `curl -s https://webhook.site/token/${uuid}/requests | jq -r '.data[0].text_content' | grep -o '[0-9]\\{6\\}'`
-        )
+        const result = execSync(`node gmail.js -f ${email}`)
           .toString()
           .trim();
 
-        if (result && result.length === 6) {
-          code = result;
+        const match = result.match(/\b\d{6}\b/);
+        if (match) {
+          code = match[0];
           break;
         }
       } catch {}
