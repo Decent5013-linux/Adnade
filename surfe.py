@@ -8,7 +8,7 @@ from pynput.mouse import Controller, Button
 from pynput.keyboard import Controller as KeyboardController, Key
 
 # ----------------- HARDCODED CLICK AREA (in 1280x720 reference) -----------------
-# Click at center of box from left=900, right=0, up=600, down=0
+# Click at center of box from left=1300, right=0, up=160, down=0
 # This targets a specific area on the page
 REF_WIDTH = 1280
 REF_HEIGHT = 720
@@ -19,8 +19,8 @@ up = 160
 down = 0
 
 # Calculate center point in reference coordinates
-REF_CENTER_X = (left + right) / 2.0  # (900 + 0)/2 = 450
-REF_CENTER_Y = (up + down) / 2.0      # (600 + 0)/2 = 300
+REF_CENTER_X = (left + right) / 2.0  # (1300 + 0)/2 = 650
+REF_CENTER_Y = (up + down) / 2.0      # (160 + 0)/2 = 80
 # --------------------------------------------------------------------------------
 
 # Global controllers
@@ -158,7 +158,7 @@ class SimpleBotSimulator:
 
     async def _compute_screen_coords_from_reference(self):
         """
-        Map the hardcoded reference center point (450,300) in REF_WIDTH x REF_HEIGHT to
+        Map the hardcoded reference center point (650,80) in REF_WIDTH x REF_HEIGHT to
         physical screen pixels for the current viewport/window.
         """
         info = await self.page.evaluate("""
@@ -284,13 +284,13 @@ class SimpleBotSimulator:
         print(f"⏱️  Session duration: {session_duration:.1f}s")
         print(f"🖱️  First click possible after: {(min_click_time - time.time()):.1f}s")
         print(f"🎯 Target click area: center at ({REF_CENTER_X:.0f}, {REF_CENTER_Y:.0f}) in 1280x720 reference")
-        print("📊 Click probability: 39%\n")
+        print("📊 Click probability: 3%\n")
 
         while time.time() < session_end:
             now = time.time()
 
-            # Check if it's time to potentially click
-            if now >= min_click_time and not self.has_clicked and random.random() < 0.39:
+            # Check if it's time to potentially click - 3% chance
+            if now >= min_click_time and not self.has_clicked and random.random() < 0.03:
                 # Get screen coordinates for the hardcoded target
                 target_phys = await self._compute_screen_coords_from_reference()
                 center_phys = await self._compute_center_screen()
@@ -341,7 +341,7 @@ class SimpleBotSimulator:
         if self.has_clicked:
             print("✅ Session ended - click performed")
         else:
-            print("⏹️  Session ended - no click (39% chance didn't trigger)")
+            print("⏹️  Session ended - no click (3% chance didn't trigger)")
 
 async def main():
     async with async_playwright() as p:
@@ -402,9 +402,10 @@ async def main():
                 await asyncio.sleep(5)
 
 if __name__ == "__main__":
-    print("🚀 Bot Simulator - Hardcoded Click at (450,300) in 1280x720 reference")
-    print(f"🎯 Target: left=900, right=0, up=600, down=0 → center at ({REF_CENTER_X}, {REF_CENTER_Y})")
+    print("🚀 Bot Simulator - Hardcoded Click at (650,80) in 1280x720 reference")
+    print(f"🎯 Target: left=1300, right=0, up=160, down=0 → center at ({REF_CENTER_X}, {REF_CENTER_Y})")
     print("📏 Viewport kept close to 1280x720 for reliable hits")
     print("🖱️  Using REAL OS mouse events (isTrusted=true)")
+    print("📊 Click probability: 3%")
     print("🔄 Fresh browser each session\n")
     asyncio.run(main())
