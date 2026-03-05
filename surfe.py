@@ -13,9 +13,9 @@ from pynput.keyboard import Controller as KeyboardController, Key
 REF_WIDTH = 1280
 REF_HEIGHT = 720
 
-left = 959
+left = 1300
 right = 0
-up = 700
+up = 160
 down = 0
 
 # Calculate center point in reference coordinates
