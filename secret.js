@@ -127,7 +127,7 @@ async function startLoop() {
     console.log("=== Running task ===", new Date().toLocaleString());
     await runTask();
     console.log("=== Waiting 1 hour ===");
-    await new Promise((r) => setTimeout(r, 3600000)); // 1 hour
+    await new Promise((r) => setTimeout(r, 5400000)); // 1 hour
   }
 }
 
