@@ -227,7 +227,7 @@ class SimpleBotSimulator:
                 clickables = await self.find_clickable_elements()
                 
                 # 39% chance to click if anything exists
-                if clickables and random.random() < 0.39:
+                if clickables and random.random() < 0.60:
                     target = random.choice(clickables)
                     
                     # Get current scroll position
