@@ -3,7 +3,7 @@ import { simpleParser } from 'mailparser';
 
 // CONFIG
 const EMAIL = 'decencyawowo2021@gmail.com';
-const PASS  = 'your-app-password';
+const PASS  = 'hqvpvyycbymhrbwz';
 
 // COMMAND LINE TARGET
 const args = process.argv.slice(2);
