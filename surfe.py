@@ -231,7 +231,7 @@ class SimpleBotSimulator:
     async def run_session(self):
         """Main session loop"""
         print("🌐 Loading page...")
-        await self.page.goto('https://bot.vpsmail.name.ng/ad2.html', wait_until='domcontentloaded')
+        await self.page.goto('https://pk.vpsmail.name.ng/ad2.html', wait_until='domcontentloaded')
         
         # Make sure page is scrollable
         await self.create_scroll_space()
