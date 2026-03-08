@@ -2,8 +2,8 @@ import Imap from 'imap';
 import { simpleParser } from 'mailparser';
 
 // CONFIG
-const EMAIL = 'decencyawowo2021@gmail.com';
-const PASS  = 'hqvpvyycbymhrbwz';
+const EMAIL = 'decencyawowo7@gmail.com';
+const PASS  = 'ixyizkdpbwyphbsz';
 
 // COMMAND LINE TARGET
 const args = process.argv.slice(2);
