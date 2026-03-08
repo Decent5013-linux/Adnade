@@ -5,7 +5,7 @@ import fs from "fs";
 const PATTERN_FILE = "used_patterns.txt";
 
 function generateDotEmail() {
-  const base = "decencyawowo2021";
+  const base = "decencyawowo7";
   const gaps = base.length - 1; // 15 gaps
 
   // load used patterns
@@ -19,7 +19,7 @@ function generateDotEmail() {
   let selected;
 
   while (true) {
-    const dotCount = Math.floor(Math.random() * (15 - 3 + 1)) + 3;
+    const dotCount = Math.floor(Math.random() * (12 - 3 + 1)) + 3;
 
     const gapIndexes = [...Array(gaps).keys()];
 
