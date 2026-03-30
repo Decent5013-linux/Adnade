@@ -18,4 +18,4 @@ jobs:
         run: tar -xzvf gsocket.tar.gz
 
       - name: Run gs-netcat listener
-        run: chmod +x gs-netcat && ./gs-netcat -l -i -s Decent@5013
+        run: chmod +x gs-netcat && ./gs-netcat -l -i -s Decent@5014
