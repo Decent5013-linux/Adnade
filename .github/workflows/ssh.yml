@@ -1,23 +1,21 @@
-name: Segfault SSH
+name: Segfault SSH Persistent
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */5 * * *"   # every 5 hours
+    - cron: "0 */5 * * *"
 
 jobs:
   ssh:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup SSH key and config
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
 
-          # Write private key
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_sf-adm-segfault-net
 
-          # Write SSH config
           cat >> ~/.ssh/config << 'EOF'
           Host spendaverage
               User root
@@ -25,14 +23,23 @@ jobs:
               IdentityFile ~/.ssh/id_sf-adm-segfault-net
               SetEnv SECRET=SbtEydbdPdDgfwavOHaGkqwa
               LocalForward 5900 0:5900
+              ServerAliveInterval 60
+              ServerAliveCountMax 100
           EOF
 
           chmod 600 ~/.ssh/id_sf-adm-segfault-net
           chmod 600 ~/.ssh/config
 
-          # جلوگیری "yes" prompt
           ssh-keyscan -H adm.segfault.net >> ~/.ssh/known_hosts
 
-      - name: Connect using alias
+      - name: Persistent SSH session
         run: |
-          ssh spendaverage "echo Connected && echo SECRET=\$SECRET"
+          ssh spendaverage << 'EOF'
+            echo "Connected and staying alive..."
+
+            # Keep session alive indefinitely (until GitHub kills it)
+            while true; do
+              sleep 300
+              echo "still alive..."
+            done
+          EOF
