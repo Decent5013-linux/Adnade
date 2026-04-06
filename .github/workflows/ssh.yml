@@ -1,0 +1,38 @@
+name: Segfault SSH
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */5 * * *"   # every 5 hours
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH key and config
+        run: |
+          mkdir -p ~/.ssh
+
+          # Write private key
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_sf-adm-segfault-net
+
+          # Write SSH config
+          cat >> ~/.ssh/config << 'EOF'
+          Host spendaverage
+              User root
+              HostName adm.segfault.net
+              IdentityFile ~/.ssh/id_sf-adm-segfault-net
+              SetEnv SECRET=SbtEydbdPdDgfwavOHaGkqwa
+              LocalForward 5900 0:5900
+          EOF
+
+          chmod 600 ~/.ssh/id_sf-adm-segfault-net
+          chmod 600 ~/.ssh/config
+
+          # جلوگیری "yes" prompt
+          ssh-keyscan -H adm.segfault.net >> ~/.ssh/known_hosts
+
+      - name: Connect using alias
+        run: |
+          ssh spendaverage "echo Connected && echo SECRET=\$SECRET"
