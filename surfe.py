@@ -207,7 +207,7 @@ def run_continuous():
             run_single_session()
             
             # Random delay between sessions (5-15 seconds)
-            delay = random.randint(5, 15)
+            delay = random.randint(1, 1)
             print(f"Waiting {delay} seconds before next session...")
             time.sleep(delay)
             
@@ -216,8 +216,8 @@ def run_continuous():
             sys.exit(0)
         except Exception as e:
             print(f"Error in session {session_count}: {str(e)}")
-            print("Restarting in 10 seconds...")
-            time.sleep(10)
+            print("Restarting in 1 seconds...")
+            time.sleep(1)
 
 if __name__ == "__main__":
     print("Starting continuous browser automation...")
