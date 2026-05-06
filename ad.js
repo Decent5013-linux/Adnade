@@ -42,7 +42,7 @@ async function browsingLoop(browser, index) {
                 waitUntil: 'domcontentloaded',
                 timeout: 10000 
             });
-            await page.waitForTimeout(3000);
+            await page.waitForTimeout(10000);
         } catch (e) {
         } finally {
             if (context) {
@@ -60,7 +60,7 @@ async function browsingLoop(browser, index) {
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
         browsingLoop(browser, i);
     }
 
