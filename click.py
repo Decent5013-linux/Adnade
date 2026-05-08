@@ -10,7 +10,7 @@ import psutil
 # SET YOUR OFFSET VALUES HERE (from center of page)
 # ============================================
 up = 0      # positive = move up from center
-down = 0    # positive = move down from center
+down = 250    # positive = move down from center
 left = 0    # positive = move left from center
 right = 0   # positive = move right from center
 # ============================================
