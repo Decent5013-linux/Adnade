@@ -23,7 +23,6 @@ jobs:
         run: |
           pip install playwright
           pip install psutil
-          pip install signal
           pip install pynput
           pip install aiohttp
 
