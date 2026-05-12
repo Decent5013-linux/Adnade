@@ -16,21 +16,21 @@ expect {
 
 expect "#"
 
-# Press Enter 5 times
 for {set i 0} {$i < 5} {incr i} {
     send "\r"
 }
 
 sleep 25
 
-# Schedule shutdown
 send "nohup bash -c 'sleep 20400 && halt' >/dev/null 2>&1 &\r"
 
-# Commands
 send "pipx install playwright\r"
 send "playwright install chromium\r"
 send "git clone https://github.com/Decent5013-linux/Adnade\r"
 send "cd Adnade\r"
 send "xvfb-run python surfe.py\r"
 
-interact
+# Keep session alive until server dies
+send "tail -f /dev/null\r"
+
+expect eof
