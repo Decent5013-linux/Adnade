@@ -1,0 +1,38 @@
+name: 3 Runners × 3 Runs Each
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-workers:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        runner_id: [1, 2, 3]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install expect
+        run: |
+          sudo apt update
+          sudo apt install expect -y
+
+      - name: Run worker 3 times (staggered)
+        run: |
+          chmod +x worker.exp
+
+          echo "Runner ${{ matrix.runner_id }} - Run 1"
+          ./worker.exp &
+          sleep 5
+
+          echo "Runner ${{ matrix.runner_id }} - Run 2"
+          ./worker.exp &
+          sleep 5
+
+          echo "Runner ${{ matrix.runner_id }} - Run 3"
+          ./worker.exp &
+
+          wait
