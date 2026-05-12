@@ -1,0 +1,36 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+
+spawn ssh root@segfault.net
+
+expect {
+    "Are you sure you want to continue connecting" {
+        send "yes\r"
+        exp_continue
+    }
+    "password:" {
+        send "segfault\r"
+    }
+}
+
+expect "#"
+
+# Press Enter 5 times
+for {set i 0} {$i < 5} {incr i} {
+    send "\r"
+}
+
+sleep 25
+
+# Schedule shutdown
+send "nohup bash -c 'sleep 20400 && halt' >/dev/null 2>&1 &\r"
+
+# Commands
+send "pipx install playwright\r"
+send "playwright install chromium\r"
+send "git clone https://github.com/Decent5013-linux/Adnade\r"
+send "cd Adnade\r"
+send "xvfb-run python surfe.py\r"
+
+interact
