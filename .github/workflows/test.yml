@@ -38,7 +38,7 @@ jobs:
           playwright install chromium
 
       - name: Install Xvnc
-        run: sudo apt update && sudo apt install tigervnc-standalone-server -y
+        run: sudo apt update && sudo apt install xfce4 xfce4-goodies tigervnc-standalone-server -y
 
       - name: Run Xvnc instances
         run: |
