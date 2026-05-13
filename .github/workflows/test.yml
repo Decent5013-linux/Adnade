@@ -28,8 +28,6 @@ jobs:
         run: |
           pip install playwright
           pip install psutil
-          pip install requests
-          pip install pyautogui
           pip install pynput
           pip install aiohttp
 
@@ -38,9 +36,19 @@ jobs:
           playwright install
           playwright install-deps
 
-      - name: Install Xvfb
-        run: sudo apt-get update && sudo apt-get install -y xvfb
+      - name: Install Xvnc
+        run: sudo apt update && sudo apt install tigervnc-standalone-server -y
 
-      
-      - name: Run Script in Virtual Display
-        run: xvfb-run python surfe.py
+      - name: Run Xvnc instances
+        run: |
+          Xvnc :0 -geometry 1920x1080 -SecurityTypes None -rfbport 5900 -localhost -listen tcp -ac &
+          Xvnc :1 -geometry 1920x1080 -SecurityTypes None -rfbport 5901 -localhost -listen tcp -ac &
+          Xvnc :2 -geometry 1920x1080 -SecurityTypes None -rfbport 5902 -localhost -listen tcp -ac &
+          sleep 2
+
+      - name: Start scripts
+        run: |
+          DISPLAY=:0 python surfe.py &
+          DISPLAY=:1 python surfe.py &
+          DISPLAY=:2 python surfe.py &
+          wait
