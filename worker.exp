@@ -28,7 +28,15 @@ send "pipx install playwright\r"
 send "playwright install chromium\r"
 send "git clone https://github.com/Decent5013-linux/Adnade\r"
 send "cd Adnade\r"
-send "xvfb-run python surfe.py\r"
+send "Xvnc :0 \
+  -geometry 1920x1080 \
+  -SecurityTypes None   \
+  -rfbport 5900         \
+  -localhost            \
+  -listen tcp           \
+  -ac                  &\r"
+send "export DISPLAY="127.0.0.1:0\r"
+send "python surfe.py\r"
 
 # Keep session alive until server dies
 send "tail -f /dev/null\r"
