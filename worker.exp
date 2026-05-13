@@ -35,7 +35,7 @@ send "Xvnc :0 \
   -localhost            \
   -listen tcp           \
   -ac                  &\r"
-send "export DISPLAY="127.0.0.1:0\r"
+send "export DISPLAY="127.0.0.1:0"\r"
 send "python surfe.py\r"
 
 # Keep session alive until server dies
