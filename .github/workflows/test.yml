@@ -45,8 +45,7 @@ jobs:
           Xvnc :0 -geometry 1920x1080 -SecurityTypes None -rfbport 5900 -localhost -listen tcp -ac &
           Xvnc :1 -geometry 1920x1080 -SecurityTypes None -rfbport 5901 -localhost -listen tcp -ac &
           Xvnc :2 -geometry 1920x1080 -SecurityTypes None -rfbport 5902 -localhost -listen tcp -ac &
-          Xvnc :3 -geometry 1920x1080 -SecurityTypes None -rfbport 5903 -localhost -listen tcp -ac &
-          
+         
           sleep 2
 
       - name: Start scripts
@@ -54,5 +53,4 @@ jobs:
           DISPLAY=:0 python surfe.py &
           DISPLAY=:1 python surfe.py &
           DISPLAY=:2 python surfe.py &
-          DISPLAY=:3 python surfe.py &
           wait
