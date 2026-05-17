@@ -1,17 +1,10 @@
 import time
 import random
-import requests
 from playwright.sync_api import sync_playwright
 from pynput.mouse import Controller as MouseController, Button
 import threading
 import psutil
 import os
-
-def get_credentials():
-    """Retrieves username and password from the provided URL."""
-    response = requests.get("https://telead.mail.name.ng/public.txt")
-    lines = response.text.strip().split('\n')
-    return lines[0].strip(), lines[1].strip()
 
 def kill_chromium_processes():
     """Kills any remaining chromium/chrome processes to prevent memory pile-up."""
@@ -95,23 +88,21 @@ def human_move_and_hover(page):
     mouse_thread.join()
 
 def run():
-    username, password = get_credentials()
-    proxy_server = "http://gateway.aluvia.io:8080"
+    proxy_server = "http://127.0.0.1:3000"
     
     browser = None
     context = None
     page = None
+    playwright = None
     
     try:
         playwright = sync_playwright().start()
         
-        # Launch browser with proxy
+        # Launch browser with local proxy
         browser = playwright.chromium.launch(
             headless=False,
             proxy={
-                "server": proxy_server,
-                "username": username,
-                "password": password
+                "server": proxy_server
             }
         )
         
