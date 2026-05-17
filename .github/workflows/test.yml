@@ -21,8 +21,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
 
       - name: Install Python dependencies
         run: |
@@ -36,6 +34,12 @@ jobs:
         run: |
           playwright install-deps
           playwright install chromium
+          
+      - name: Install tinyproxy
+        run: sudo apt install tinyproxy
+       
+      - name: Start tinyproxy
+        run: tinyproxy -d -c tinyproxy.conf &
 
       - name: Install Xvnc
         run: sudo apt update && sudo apt install xfce4 xfce4-goodies tigervnc-standalone-server -y
