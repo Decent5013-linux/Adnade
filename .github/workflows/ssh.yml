@@ -1,4 +1,4 @@
-name: Segfault SSH Persistent
+name: SSH spendaverage
 
 on:
   workflow_dispatch:
