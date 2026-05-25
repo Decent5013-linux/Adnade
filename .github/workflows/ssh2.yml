@@ -1,0 +1,45 @@
+name: SSH crewvery
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */5 * * *"
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+
+          echo "${{ secrets.SSH_KEY2 }}" > ~/.ssh/id_sf-adm-segfault-net
+
+          cat >> ~/.ssh/config << 'EOF'
+          Host crewvery
+              User root
+              HostName adm.segfault.net
+              IdentityFile ~/.ssh/id_sf-adm-segfault-net
+              SetEnv SECRET=HvIltDFgHCOFhHkVkGemgDEY
+              LocalForward 5900 0:5900
+              ServerAliveInterval 60
+              ServerAliveCountMax 100
+          EOF
+
+          chmod 600 ~/.ssh/id_sf-adm-segfault-net
+          chmod 600 ~/.ssh/config
+
+          ssh-keyscan -H adm.segfault.net >> ~/.ssh/known_hosts
+
+      - name: Persistent SSH session
+        run: |
+          ssh crewvery << 'EOF'
+            echo "Connected and staying alive..."
+
+            # Keep session alive indefinitely (until GitHub kills it)
+            while true; do
+              sleep 300
+              echo "still alive..."
+            done
+          EOF
