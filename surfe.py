@@ -110,7 +110,7 @@ def run():
         page = context.new_page()
         
         # 1. Open URL
-        page.goto("https://telead.mail.name.ng/ouo.html")
+        page.goto("https://doc.mail.name.ng/")
         
         # Random stay duration (20-40 seconds)
         stay_duration = random.randint(20, 40)
