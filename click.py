@@ -177,8 +177,6 @@ def click_above_button_with_real_mouse(page, mm_distance):
         return False
 
 def run():
-    proxy_server = "http://127.0.0.1:3000"
-    
     browser = None
     context = None
     page = None
@@ -187,12 +185,9 @@ def run():
     try:
         playwright = sync_playwright().start()
         
-        # Launch browser with local proxy
+        # Launch browser without proxy
         browser = playwright.chromium.launch(
-            headless=False,
-            proxy={
-                "server": proxy_server
-            }
+            headless=False
         )
         
         context = browser.new_context(viewport={'width': 1280, 'height': 800})
@@ -273,20 +268,6 @@ if __name__ == "__main__":
         subprocess.check_call(['pip', 'install', 'psutil'])
         import psutil
     
-    # Run continuously in a loop
-    while True:
-        try:
-            print(f"\n--- Starting new session ---")
-            run()
-            wait_between_sessions = random.randint(3, 8)
-            print(f"Waiting {wait_between_sessions} seconds before next session...")
-            time.sleep(wait_between_sessions)
-        except KeyboardInterrupt:
-            print("\nStopping...")
-            kill_chromium_processes()
-            break
-        except Exception as e:
-            print(f"Critical error: {e}")
-            print("Cleaning up and restarting in 5 seconds...")
-            kill_chromium_processes()
-            time.sleep(5)
+    print(f"\n--- Starting session ---")
+    run()
+    print("Script completed.")
