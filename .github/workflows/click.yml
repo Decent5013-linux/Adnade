@@ -50,8 +50,8 @@ jobs:
 
       - name: Start scripts
         run: |
-          DISPLAY=:0 python surfe.py &
-          DISPLAY=:1 python surfe.py &
-          DISPLAY=:2 python surfe.py &
-          DISPLAY=:3 python surfe.py &
+          DISPLAY=:0 python click.py &
+          DISPLAY=:1 python click.py &
+          DISPLAY=:2 python click.py &
+          DISPLAY=:3 python click.py &
           wait
