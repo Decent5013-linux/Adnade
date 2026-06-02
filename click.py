@@ -7,7 +7,7 @@ import psutil
 import os
 
 # CONFIGURATION - Distance in millimeters to move cursor upwards before clicking
-mm = 4  # Change this value to adjust the upward offset distance
+mm = 6  # Change this value to adjust the upward offset distance
 
 def kill_chromium_processes():
     """Kills any remaining chromium/chrome processes to prevent memory pile-up."""
