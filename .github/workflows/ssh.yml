@@ -1,45 +1,64 @@
-name: SSH spendaverage
+name: SSH crewvery + spendaverage
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */5 * * *"
+    - cron: "0 */5 * * *" # every 5 hours
 
 jobs:
   ssh:
     runs-on: ubuntu-latest
+    timeout-minutes: 360
 
     steps:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
 
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_sf-adm-segfault-net
+          echo "${{ secrets.SSH_KEY2 }}" > ~/.ssh/id_crewvery
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_spendaverage
 
           cat >> ~/.ssh/config << 'EOF'
+          Host crewvery
+              User root
+              HostName adm.segfault.net
+              IdentityFile ~/.ssh/id_crewvery
+              SetEnv SECRET=HvIltDFgHCOFhHkVkGemgDEY
+              LocalForward 5900 0:5900
+              ServerAliveInterval 60
+              ServerAliveCountMax 100
+
           Host spendaverage
               User root
               HostName adm.segfault.net
-              IdentityFile ~/.ssh/id_sf-adm-segfault-net
+              IdentityFile ~/.ssh/id_spendaverage
               SetEnv SECRET=SbtEydbdPdDgfwavOHaGkqwa
               LocalForward 5900 0:5900
               ServerAliveInterval 60
               ServerAliveCountMax 100
           EOF
 
-          chmod 600 ~/.ssh/id_sf-adm-segfault-net
-          chmod 600 ~/.ssh/config
-
+          chmod 600 ~/.ssh/id_crewvery ~/.ssh/id_spendaverage ~/.ssh/config
           ssh-keyscan -H adm.segfault.net >> ~/.ssh/known_hosts
 
-      - name: Persistent SSH session
+      - name: Persistent SSH sessions
         run: |
-          ssh spendaverage << 'EOF'
+          ssh crewvery << 'EOF' >/tmp/crewvery.log 2>&1 &
             echo "Connected and staying alive..."
-
-            # Keep session alive indefinitely (until GitHub kills it)
             while true; do
               sleep 300
               echo "still alive..."
             done
           EOF
+          PID1=$!
+
+          ssh spendaverage << 'EOF' >/tmp/spendaverage.log 2>&1 &
+            echo "Connected and staying alive..."
+            while true; do
+              sleep 300
+              echo "still alive..."
+            done
+          EOF
+          PID2=$!
+
+          wait "$PID1" "$PID2"
