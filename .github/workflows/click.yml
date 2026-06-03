@@ -2,10 +2,19 @@ name: Playwright click
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
 
 jobs:
   run-playwright:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        instance: [1, 2]
 
     steps:
       - name: Checkout repository
@@ -16,19 +25,27 @@ jobs:
         with:
           python-version: '3.11'
 
-
       - name: Install Python dependencies
         run: |
           pip install playwright
           pip install psutil
           pip install pynput
-          
 
       - name: Install Playwright Browsers
         run: |
           playwright install-deps
           playwright install chromium
-          
-      
-      - name: Start scripts
-        run: xvfb-run python click.py
+
+      - name: Run click.py and keep job alive for 5 minutes
+        run: |
+          start=$(date +%s)
+          echo "Running matrix instance: ${{ matrix.instance }}"
+          xvfb-run -a python click.py
+
+          elapsed=$(( $(date +%s) - start ))
+          remaining=$((300 - elapsed))
+
+          if [ "$remaining" -gt 0 ]; then
+            echo "Keeping job alive for ${remaining}s"
+            sleep "$remaining"
+          fi
