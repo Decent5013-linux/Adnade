@@ -21,7 +21,6 @@ jobs:
         with:
           python-version: '3.11'
 
-
       - name: Install Python dependencies
         run: |
           pip install playwright
@@ -50,7 +49,10 @@ jobs:
           Xvnc :1 -geometry 1920x1080 -SecurityTypes None -rfbport 5901 -localhost -listen tcp -ac &
           Xvnc :2 -geometry 1920x1080 -SecurityTypes None -rfbport 5902 -localhost -listen tcp -ac &
           Xvnc :3 -geometry 1920x1080 -SecurityTypes None -rfbport 5903 -localhost -listen tcp -ac &
-         
+          Xvnc :4 -geometry 1920x1080 -SecurityTypes None -rfbport 5904 -localhost -listen tcp -ac &
+          Xvnc :5 -geometry 1920x1080 -SecurityTypes None -rfbport 5905 -localhost -listen tcp -ac &
+          Xvnc :6 -geometry 1920x1080 -SecurityTypes None -rfbport 5906 -localhost -listen tcp -ac &
+          
           sleep 2
 
       - name: Start scripts
@@ -59,4 +61,7 @@ jobs:
           DISPLAY=:1 python surfe.py &
           DISPLAY=:2 python surfe.py &
           DISPLAY=:3 python surfe.py &
+          DISPLAY=:4 python surfe.py &
+          DISPLAY=:5 python surfe.py &
+          DISPLAY=:6 python surfe.py &
           wait
