@@ -1,4 +1,4 @@
-name: Playwright python
+name: Playwright Python
 
 on:
   workflow_dispatch:
@@ -34,44 +34,27 @@ jobs:
           playwright install-deps
           playwright install chromium
           
-      - name: Install tinyproxy
-        run: sudo apt install tinyproxy
-       
+      - name: Install Xvfb and tinyproxy
+        run: |
+          sudo apt update
+          sudo apt install xvfb tinyproxy -y
+
       - name: Start tinyproxy
         run: tinyproxy -d -c tinyproxy.conf &
 
-      - name: Install Xvnc
-        run: sudo apt update && sudo apt install xfce4 xfce4-goodies tigervnc-standalone-server -y
-
-      - name: Run Xvnc instances
+      - name: Start scripts with xvfb-run (parallel instances)
         run: |
-          Xvnc :0 -geometry 1920x1080 -SecurityTypes None -rfbport 5900 -localhost -listen tcp -ac &
-          Xvnc :1 -geometry 1920x1080 -SecurityTypes None -rfbport 5901 -localhost -listen tcp -ac &
-          Xvnc :2 -geometry 1920x1080 -SecurityTypes None -rfbport 5902 -localhost -listen tcp -ac &
-          Xvnc :3 -geometry 1920x1080 -SecurityTypes None -rfbport 5903 -localhost -listen tcp -ac &
-          Xvnc :4 -geometry 1920x1080 -SecurityTypes None -rfbport 5904 -localhost -listen tcp -ac &
-          Xvnc :5 -geometry 1920x1080 -SecurityTypes None -rfbport 5905 -localhost -listen tcp -ac &
-          Xvnc :6 -geometry 1920x1080 -SecurityTypes None -rfbport 5906 -localhost -listen tcp -ac &
-          Xvnc :7 -geometry 1920x1080 -SecurityTypes None -rfbport 5907 -localhost -listen tcp -ac &
-          Xvnc :8 -geometry 1920x1080 -SecurityTypes None -rfbport 5908 -localhost -listen tcp -ac &
-          Xvnc :9 -geometry 1920x1080 -SecurityTypes None -rfbport 5909 -localhost -listen tcp -ac &
-          Xvnc :10 -geometry 1920x1080 -SecurityTypes None -rfbport 5910 -localhost -listen tcp -ac &
-          Xvnc :11 -geometry 1920x1080 -SecurityTypes None -rfbport 5911 -localhost -listen tcp -ac &
-          
-          sleep 2
-
-      - name: Start scripts
-        run: |
-          DISPLAY=:0 python surfe.py &
-          DISPLAY=:1 python surfe.py &
-          DISPLAY=:2 python surfe.py &
-          DISPLAY=:3 python surfe.py &
-          DISPLAY=:4 python surfe.py &
-          DISPLAY=:5 python surfe.py &
-          DISPLAY=:6 python surfe.py &
-          DISPLAY=:7 python surfe.py &
-          DISPLAY=:8 python surfe.py &
-          DISPLAY=:9 python surfe.py &
-          DISPLAY=:10 python surfe.py &
-          DISPLAY=:11 python surfe.py &
+          # Launch multiple script instances, each with its own virtual display
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" python surfe.py &
           wait
