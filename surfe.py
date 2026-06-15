@@ -5,6 +5,8 @@ from pynput.mouse import Controller as MouseController, Button
 import threading
 import psutil
 import os
+import uuid
+import shutil
 
 def kill_chromium_processes():
     """Kills any remaining chromium/chrome processes to prevent memory pile-up."""
@@ -87,6 +89,19 @@ def human_move_and_hover(page):
     
     mouse_thread.join()
 
+def setup_environment():
+    """Configure environment for multi-instance virtual display usage."""
+    os.environ['DISPLAY'] = os.environ.get('DISPLAY', ':99')
+    os.environ['LIBGL_ALWAYS_SOFTWARE'] = '1'
+    os.environ['GALLIUM_DRIVER'] = 'llvmpipe'
+    
+    # Increase file descriptor limit if possible
+    try:
+        import resource
+        resource.setrlimit(resource.RLIMIT_NOFILE, (65536, 65536))
+    except:
+        pass
+
 def run():
     proxy_server = "http://127.0.0.1:3000"
     
@@ -95,19 +110,74 @@ def run():
     page = None
     playwright = None
     
+    # Generate unique user data dir per instance to avoid conflicts
+    unique_id = str(uuid.uuid4())[:8]
+    user_data_dir = f"/tmp/chrome-user-data-{unique_id}"
+    
     try:
         playwright = sync_playwright().start()
         
-        # Launch browser with local proxy
-        browser = playwright.chromium.launch(
+        # Use launch_persistent_context instead of launch for user_data_dir
+        context = playwright.chromium.launch_persistent_context(
+            user_data_dir=user_data_dir,
             headless=False,
             proxy={
                 "server": proxy_server
-            }
+            },
+            viewport={'width': 1280, 'height': 800},
+            args=[
+                # Disable GPU entirely - essential for Xvfb/Xvnc
+                '--disable-gpu',
+                '--disable-gpu-compositing',
+                '--disable-gpu-sandbox',
+                '--disable-software-rasterizer',
+                
+                # Disable D-Bus to avoid connection errors
+                '--disable-dbus',
+                
+                # Memory and performance optimizations
+                '--disable-dev-shm-usage',
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                
+                # Disable extensions and unnecessary features
+                '--disable-extensions',
+                '--disable-background-networking',
+                '--disable-sync',
+                '--disable-translate',
+                '--disable-features=TranslateUI',
+                '--disable-features=VizDisplayCompositor',
+                '--disable-features=IsolateOrigins,site-per-process',
+                
+                # Disable audio
+                '--mute-audio',
+                '--disable-audio-output',
+                
+                # Reduce GPU memory usage
+                '--disable-accelerated-2d-canvas',
+                '--disable-accelerated-jpeg-decoding',
+                '--disable-accelerated-mjpeg-decode',
+                '--disable-accelerated-video-decode',
+                
+                # WebGL disabled to prevent GPU issues
+                '--disable-webgl',
+                '--disable-webgl2',
+                
+                # Other stability improvements
+                '--disable-breakpad',
+                '--disable-crash-reporter',
+                '--disable-logging',
+                '--disable-notifications',
+                '--no-first-run',
+                '--no-default-browser-check',
+            ]
         )
         
-        context = browser.new_context(viewport={'width': 1280, 'height': 800})
-        page = context.new_page()
+        # Get browser reference from context
+        browser = context.browser
+        
+        # Create a new page (launch_persistent_context already creates one)
+        page = context.pages[0] if context.pages else context.new_page()
         
         # 1. Open URL
         page.goto("https://doc.mail.name.ng/")
@@ -181,6 +251,13 @@ def run():
         except:
             pass
         
+        # Clean up user data directory
+        try:
+            if os.path.exists(user_data_dir):
+                shutil.rmtree(user_data_dir, ignore_errors=True)
+        except:
+            pass
+        
         # Extra safety: kill any remaining chromium processes
         time.sleep(1)  # Give processes time to close gracefully
         kill_chromium_processes()
@@ -188,6 +265,9 @@ def run():
         print("Browser closed and cleaned up successfully.")
 
 if __name__ == "__main__":
+    # Setup environment for virtual displays
+    setup_environment()
+    
     # Install psutil if not already installed
     try:
         import psutil
@@ -199,7 +279,7 @@ if __name__ == "__main__":
     # Run continuously in a loop
     while True:
         try:
-            print(f"\n--- Starting new session ---")
+            print(f"\n--- Starting new session (PID: {os.getpid()}) ---")
             run()
             wait_between_sessions = random.randint(3, 8)
             print(f"Waiting {wait_between_sessions} seconds before next session...")
