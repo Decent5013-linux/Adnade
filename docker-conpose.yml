@@ -1,0 +1,69 @@
+services:
+  worker:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "1"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+  worker:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "2"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+
+   worker:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "3"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+
+
+    worker:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "4"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+
+  worker:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "5"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+      
+
+worker:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "6"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+
+  worker:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "7"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+
+
+worker:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "8"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+      
+
+  
+      
+      
