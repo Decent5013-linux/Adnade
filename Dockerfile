@@ -38,4 +38,4 @@ Xvfb :99 -screen 0 1920x1080x24 & \
 export DISPLAY=:99 && \
 dbus-daemon --session --fork && \
 fluxbox >/dev/null 2>&1 & \
-python worker.py'
+python surfe.py'
