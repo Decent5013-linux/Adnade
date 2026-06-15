@@ -21,6 +21,14 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install tinyproxy
+        run: |
+          sudo apt update
+          sudo apt install tinyproxy -y
+
+      - name: Start tinyproxy
+        run: tinyproxy -d -c tinyproxy.conf &    
+
       - name: Install Run docker
         run: |
           docker compose up -d --build
