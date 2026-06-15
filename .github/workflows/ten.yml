@@ -21,30 +21,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Python dependencies
+      - name: Install Run docker
         run: |
-          pip install playwright
-          pip install requests
-          pip install psutil
-          pip install pynput
-          pip install aiohttp
-
-      - name: Install Playwright Browsers
-        run: |
-          playwright install-deps
-          playwright install chromium
+          docker compose up -d --build
           
-      - name: Install Xvfb and tinyproxy
-        run: |
-          sudo apt update
-          sudo apt install xvfb tinyproxy -y
-
-      - name: Start tinyproxy
-        run: tinyproxy -d -c tinyproxy.conf &
-
-      - name: Start scripts with xvfb-run (parallel instances)
-        run: |
-          # Launch multiple script instances, each with its own virtual display
-          xvfb-run python surfe.py &
           wait
-          
