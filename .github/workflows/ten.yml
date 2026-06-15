@@ -30,25 +30,6 @@ jobs:
         run: |
           tinyproxy -d -c tinyproxy.conf &
 
-
-      - name: Copy docker-compose
-        run: |
-          cp docker-compose.yml /home/runner/work/Adnade/Adnade
-
-
-      - name: Copy Dockerfile
-        run: |
-          cp Dockerfile /home/runner/work/Adnade/Adnade
-
-      - name: Copy requirements.txt
-        run: |
-         cp requirements.txt /home/runner/work/Adnade/Adnade
-
-      - name: Copy Surfe.py
-        run: |
-         cp surfe.py /home/runner/work/Adnade/Adnade
-
-
       - name: Run docker compose
         run: |
-          docker compose -f docker-compose.yml up -d --build
+          docker compose -f $GITHUB_WORKSPACE/docker-compose.yml up -d --build
