@@ -27,10 +27,9 @@ jobs:
           sudo apt install tinyproxy -y
 
       - name: Start tinyproxy
-        run: tinyproxy -d -c tinyproxy.conf &    
-
-      - name: Install Run docker
         run: |
-          docker compose up -d --build
-          
-          wait
+          tinyproxy -d -c tinyproxy.conf &
+
+      - name: Run docker compose
+        run: |
+          docker compose -f docker-compose.yml up -d --build
