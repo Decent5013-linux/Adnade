@@ -46,4 +46,5 @@ jobs:
         run: |
           # Launch multiple script instances, each with its own virtual display
           xvfb-run python surfe.py &
+          wait
           
