@@ -110,7 +110,7 @@ def run():
         page = context.new_page()
         
         # 1. Open URL
-        page.goto("https://doc.mail.name.ng/page/index.php")
+        page.goto("https://doc.mail.name.ng/index.php")
         
         # Random stay duration (20-40 seconds)
         stay_duration = random.randint(20, 40)
