@@ -2,6 +2,7 @@ FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y \
     xvfb \
+    x11-utils \
     gcc \
     build-essential \
     dbus-x11 \
@@ -37,7 +38,7 @@ COPY . .
 
 CMD bash -c '\
 Xvfb :99 -screen 0 1920x1080x24 & \
+sleep 5 && \
 export DISPLAY=:99 && \
-dbus-daemon --session --fork && \
-fluxbox >/dev/null 2>&1 & \
-python surfe.py'
+xdpyinfo && \
+python -u surfe.py'
