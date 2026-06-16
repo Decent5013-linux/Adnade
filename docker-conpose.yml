@@ -54,3 +54,31 @@ services:
     environment:
       WORKER_ID: "8"
       PROXY_SERVER: "http://127.0.0.1:3000"
+
+  worker9:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "9"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+  worker10:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "10"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+  worker11:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "11"
+      PROXY_SERVER: "http://127.0.0.1:3000"
+
+  worker12:
+    build: .
+    network_mode: host
+    environment:
+      WORKER_ID: "12"
+      PROXY_SERVER: "http://127.0.0.1:3000"
