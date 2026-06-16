@@ -29,7 +29,10 @@ jobs:
       - name: Start tinyproxy
         run: |
           tinyproxy -d -c tinyproxy.conf &
+      - name: clone repo
+        run: |
+           git clone https://github.com/Decent5013-linux/Adnade && cd Adnade
 
       - name: Run docker compose
         run: |
-          docker compose -f $GITHUB_WORKSPACE/docker-compose.yml up -d --build
+          docker compose -f docker-compose.yml up -d --build
