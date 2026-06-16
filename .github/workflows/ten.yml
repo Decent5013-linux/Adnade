@@ -35,4 +35,4 @@ jobs:
 
       - name: Run docker compose
         run: |
-          cd Adnade && docker compose up -d --build
+          cd Adnade && docker compose -f docker-compose.yml up -d --build
