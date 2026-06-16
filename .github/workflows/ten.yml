@@ -29,11 +29,19 @@ jobs:
       - name: Start tinyproxy
         run: |
           tinyproxy -d -c tinyproxy.conf &
+
       - name: clone repo
         run: |
-           git clone https://github.com/Decent5013-linux/Adnade && cd Adnade
+          git clone https://github.com/Decent5013-linux/Adnade && cd Adnade
 
       - name: Run docker compose
         run: |
           cd Adnade && docker compose -f docker-compose.yml up -d --build
-          wait
+
+      - name: Keep workflow running for 6 hours
+        run: |
+          echo "Docker compose completed. Keeping workflow alive for 6 hours..."
+          echo "Start time: $(date)"
+          sleep 21600  # 6 hours = 21600 seconds
+          echo "End time: $(date)"
+          echo "6 hours completed. Workflow will now finish."
