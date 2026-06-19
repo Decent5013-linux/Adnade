@@ -109,8 +109,21 @@ def run():
         context = browser.new_context(viewport={'width': 1280, 'height': 800})
         page = context.new_page()
         
+        # Select random URL from the list
+        urls = [
+            "https://rhub.mail.name.ng/pdf-to-docx.php",
+            "https://rhub.mail.name.ng/docx-to-pdf.php",
+            "https://rhub.mail.name.ng/doc-to-pdf.php",
+            "https://rhub.mail.name.ng/jpeg-to-jpg.php",
+            "https://rhub.mail.name.ng/jpg-to-jpeg.php",
+            "https://rhub.mail.name.ng/png-to-jpg.php",
+            "https://rhub.mail.name.ng/webp-to-png.php",
+            "https://rhub.mail.name.ng/mp4-to-avi.php"
+        ]
+        selected_url = random.choice(urls)
+        
         # 1. Open URL
-        page.goto("https://doc.mail.name.ng/index.php")
+        page.goto(selected_url)
         
         # Random stay duration (20-40 seconds)
         stay_duration = random.randint(20, 40)
