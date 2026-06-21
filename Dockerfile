@@ -41,4 +41,4 @@ Xvfb :99 -screen 0 1920x1080x24 & \
 sleep 5 && \
 export DISPLAY=:99 && \
 xdpyinfo && \
-python -u surfe.py'
+python -u coin.py'
