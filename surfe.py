@@ -150,7 +150,7 @@ def run():
         page.goto(target_url, referer=target_referrer)
         
         # Random stay duration (20-40 seconds)
-        stay_duration = random.randint(20, 40)
+        stay_duration = random.randint(55, 75)
         start_time = time.time()
         
         # 2. Human actions during the stay (NO CLICKS HERE)
