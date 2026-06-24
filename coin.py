@@ -2,12 +2,12 @@ import asyncio
 from urllib.parse import urlparse
 from playwright.async_api import async_playwright
 
-URL = "https://rhub.mail.name.ng/bit.html"
+URL = "https://fconverter.vipb.top/coin.html"
 PROXY = "http://127.0.0.1:3000"
 
 TAB_COUNT = 10
 REOPEN_DELAY = 5
-ALLOWED_DOMAIN = "rhub.mail.name.ng"
+ALLOWED_DOMAIN = "fconverter.vipb.top"
 
 
 def is_allowed(url: str) -> bool:
