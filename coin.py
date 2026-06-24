@@ -5,8 +5,8 @@ from playwright.async_api import async_playwright
 URL = "https://fconverter.vipb.top/coin.html"
 PROXY = "http://127.0.0.1:3000"
 
-TAB_COUNT = 5
-REOPEN_DELAY = 60
+TAB_COUNT = 10
+REOPEN_DELAY = 300
 ALLOWED_DOMAIN = "fconverter.vipb.top"
 
 
