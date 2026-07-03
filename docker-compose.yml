@@ -113,14 +113,14 @@ services:
       WORKER_ID: "16"
       PROXY_SERVER: "http://127.0.0.1:3000"
 
-      worker17:
+  worker17:
     build: .
     network_mode: host
     environment:
       WORKER_ID: "17"
       PROXY_SERVER: "http://127.0.0.1:3000"
 
-      worker18:
+  worker18:
     build: .
     network_mode: host
     environment:
