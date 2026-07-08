@@ -38,6 +38,15 @@ jobs:
           playwright install
           playwright install-deps
 
+
+      - name: Install Xvfb and tinyproxy
+        run: |
+          sudo apt update
+          sudo apt install xvfb tinyproxy -y
+
+      - name: Start tinyproxy
+        run: tinyproxy -d -c tinyproxy.conf &
+
       - name: Install Xvfb
         run: sudo apt-get update && sudo apt-get install -y xvfb
 
